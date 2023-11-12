@@ -1,1 +1,22 @@
-{"luis": {"games": 9, "wins": 4, "loses": 1, "ties": 4}, "global": {"games": 19, "wins": 9, "loses": 2, "ties": 8}, "andre": {"games": 10, "wins": 5, "loses": 1, "ties": 4}}
+{
+    "global": {
+        "games": 45,
+        "wins": 14,
+        "loses": 11,
+        "ties": 20
+    },
+    "luis": {
+        "games": 25,
+        "wins": 8,
+        "loses": 6,
+        "ties": 11,
+        "time": 1699801720.4808066
+    },
+    "andre": {
+        "games": 20,
+        "wins": 6,
+        "loses": 5,
+        "ties": 9,
+        "time": 1699801390.4165304
+    }
+}

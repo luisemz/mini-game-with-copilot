@@ -1,14 +1,6 @@
-# create game where user chan choose rock, scissors or paper
-# allow user to insert your name
-# create menu where user can select play new game, play again, view scores, exit
-# create class Game
-# create class Player
-# create class Computer
-# create class Score
-
 from random import randint
 import os
-import time
+import time, datetime
 import json
 
 
@@ -25,7 +17,6 @@ class Game:
             print("Welcome to Rock, Paper, Scissors game!")
             print("Menu:")
             print("1. Play new game")
-            # validate if user name is not empty and show name in menu option 2
             if self.player.name != "":
                 print("2. Play again ({})".format(self.player.name))
             else:
@@ -42,6 +33,7 @@ class Game:
             elif choice == "3":
                 self.score.show_scores()
             elif choice == "4":
+                print("Bye!")
                 exit()
             else:
                 print("Select correct option!")
@@ -71,7 +63,6 @@ class Game:
         print("--------------------")
         
         self.player.choice = input("Choose rock, paper or scissors: ").lower()
-        # validate player choice
         while self.player.choice not in ["rock", "paper", "scissors"]:
             print("You have to choose rock, paper or scissors!")
             self.player.choice = input("Choose rock, paper or scissors: ").lower()
@@ -180,22 +171,30 @@ class Score:
         else:
             with open("scores.json", "r") as file:
                 scores = json.load(file)
+        
+        scores["global"] = {
+            "games": self.global_games,
+            "wins": self.global_wins,
+            "loses": self.global_loses,
+            "ties": self.global_ties,
+        }
+        scores[player_name] = {
+            "games": self.games,
+            "wins": self.wins,
+            "loses": self.loses,
+            "ties": self.ties,
+            "time": time.time(),
+        }
 
-        if player_name not in scores:
-            scores[player_name] = {"games": self.games, "wins": self.wins, "loses": self.loses, "ties": self.ties}
-        else:
-            scores[player_name]["games"] = self.games
-            scores[player_name]["wins"] = self.wins
-            scores[player_name]["loses"] = self.loses
-            scores[player_name]["ties"] = self.ties
-
-        scores["global"] = {"games": self.global_games, "wins": self.global_wins, "loses": self.global_loses, "ties": self.global_ties}
         with open("scores.json", "w") as file:
-            json.dump(scores, file)
+            json.dump(scores, file, indent=4)
+
+    def format_time(self, time):
+        return datetime.datetime.fromtimestamp(time).isoformat()\
+            .split(".")[0].replace("T", " ").replace("Z", "").replace("-", "/")
 
     def show_scores(self):
-        # show score by user name
-        # verify if file exists
+        os.system('clear')
         if not os.path.isfile("scores.json"):
             print("No scores to show!")
             input("Press enter to continue...")
@@ -205,21 +204,31 @@ class Score:
         print("--------------------")
         print("Global score:")
         score = scores["global"]
-        print("Games: {} - (Wins: {}/Loses: {}/Ties: {})".format(score["games"], score["wins"], score["loses"], score["ties"]))
+        print("Games: {} - (Wins: {}/Loses: {}/Ties: {})".format(
+            score["games"],
+            score["wins"],
+            score["loses"],
+            score["ties"],
+        ))
         print("--------------------")
         print("Score by user:")
         for name, score in scores.items():
             if name == "global":
                 continue
             print("Name: {}".format(name))
-            print("Games: {} - (Wins: {}/Loses: {}/Ties: {})".format(score["games"], score["wins"], score["loses"], score["ties"]))
+            print("Games: {} - (Wins: {}/Loses: {}/Ties: {}) - Time: {}".format(
+                score["games"],
+                score["wins"],
+                score["loses"],
+                score["ties"],
+                self.format_time(score["time"]),
+            ))
             print()
     
         print("--------------------")
         input("Press enter to continue...")
 
 if __name__ == "__main__":
-    # handle ctrl+c
     try:
         game = Game()
         game.menu()
